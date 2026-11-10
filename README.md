@@ -1,4 +1,4 @@
-﻿# Visual Data Portfolio
+﻿# Visual Data Portfolio\n\nLive: https://xiaoqzhenhao.github.io/visual-data-portfolio/
 
 虚拟现实技术应用专科应届 · 视觉数据工程方向作品集。
 
@@ -18,3 +18,4 @@ Synthetic data and simulated predictions are labelled. This is a personal practi
 ```bash
 python -m http.server 8138
 ```
+
