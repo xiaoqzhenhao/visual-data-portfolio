@@ -1,0 +1,5 @@
+﻿_*.png
+_*.py
+_*.cjs
+.DS_Store
+Thumbs.db
