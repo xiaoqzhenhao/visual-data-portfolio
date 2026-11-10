@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QA Console · 视觉数据质检工作台</title>
+<meta name="description" content="面向视觉数据标注的质检工作台：COCO/YOLO 标签检查、问题定位、复核流转与报告导出。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070a0f'/%3E%3Cpath d='M8 16h16M16 8v16' stroke='%2337e0b2' stroke-width='1.6'/%3E%3Crect x='6' y='6' width='20' height='20' rx='4' fill='none' stroke='%235b8cff' stroke-width='1.2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../assets/css/qa.css">
+</head>
+<body>
+
+<header class="appbar">
+  <a class="brand" href="../../index.html" aria-label="返回求职主页">
+    <span class="brand__mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M7.5 12h9M12 7.5v9"/>
+      </svg>
+    </span>
+    <b>QA CONSOLE</b>
+    <span>视觉数据质检 / v1.0</span>
+  </a>
+
+  <nav class="tabs" aria-label="工作台视图">
+    <button class="on" data-tab="review">复核</button>
+    <button data-tab="rules">规则</button>
+    <button data-tab="test">系统测试</button>
+    <button data-tab="report">报告</button>
+  </nav>
+
+  <div class="appbar__right">
+    <span class="pill">BATCH · WH-A-2026-10</span>
+    <a class="ghost" href="../../index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 18l-6-6 6-6"/></svg>
+      <span>返回主页</span>
+    </a>
+  </div>
+</header>
+
+<!-- ================= 复核 ================= -->
+<main class="view" id="view-review">
+  <div class="stats">
+    <div class="stat"><div class="stat__k">Samples</div><div class="stat__v" id="kpiSamples">—</div></div>
+    <div class="stat"><div class="stat__k">Boxes</div><div class="stat__v" id="kpiBoxes">—</div></div>
+    <div class="stat"><div class="stat__k">Reviewed</div><div class="stat__v blue" id="kpiReviewed">—</div></div>
+    <div class="stat"><div class="stat__k">Issue Samples</div><div class="stat__v red" id="kpiBad">—</div></div>
+    <div class="stat"><div class="stat__k">Clean Rate</div><div class="stat__v mint" id="kpiPass">—</div></div>
+  </div>
+
+  <div class="workspace">
+    <!-- 样本列表 -->
+    <aside class="panel samples-panel">
+      <div class="panel__head">样本 <span class="mono" id="listCount">LOADING</span></div>
+      <div class="filters" id="filters">
+        <button class="on" data-filter="all">全部</button>
+        <button data-filter="issue">有问题</button>
+        <button data-filter="unreviewed">待复核</button>
+        <button data-filter="pass">已通过</button>
+        <button data-filter="reject">已打回</button>
+      </div>
+      <div class="sample-list" id="sampleList"></div>
+      <div class="pager">
+        <button id="prevPage" aria-label="上一页">‹</button>
+        <span id="pageInfo">— / —</span>
+        <button id="nextPage" aria-label="下一页">›</button>
+      </div>
+    </aside>
+
+    <!-- 画布 -->
+    <section class="panel stage-panel">
+      <div class="stage-head">
+        <div class="stage-title">
+          <b id="stageId">—</b>
+          <span id="stageSub">视觉数据复核</span>
+        </div>
+        <div class="stage-tools">
+          <button class="tool tool--icon" id="zoomOut" title="缩小">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14"/></svg>
+          </button>
+          <button class="tool" id="zoomFit" title="适应窗口">FIT</button>
+          <button class="tool tool--icon" id="zoomIn" title="放大">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <button class="tool on" id="toggleBoxes" title="显示/隐藏标注框">BOX</button>
+          <button class="tool on" id="toggleLabels" title="显示/隐藏标签">TAG</button>
+          <button class="tool" id="toggleIssueOnly" title="只看问题框">仅问题</button>
+        </div>
+      </div>
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <canvas id="canvas"></canvas>
+          <div class="stage-empty" id="stageEmpty">NO SAMPLE</div>
+          <div class="stage-hud">
+            <span class="hud-chip" id="hudSize">—</span>
+            <span class="hud-chip" id="hudZoom">100%</span>
+            <span class="hud-chip red" id="hudIssues" hidden>0 ISSUE</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-foot">
+        <div class="legend" id="legend"></div>
+        <div class="keys"><kbd>A</kbd><kbd>D</kbd> 切换 · <kbd>P</kbd> 通过 · <kbd>X</kbd> 打回 · <kbd>+</kbd><kbd>-</kbd> 缩放</div>
+      </div>
+    </section>
+
+    <!-- 右栏 -->
+    <aside class="panel inspector">
+      <div class="panel__head">复核 <span class="review-status" id="reviewStatus">待复核</span></div>
+      <div class="meta-grid">
+        <div class="meta"><b>SAMPLE</b><span id="mId">—</span></div>
+        <div class="meta"><b>LABEL</b><span id="mLabel">—</span></div>
+        <div class="meta"><b>SIZE</b><span id="mSize">—</span></div>
+        <div class="meta"><b>BOXES</b><span id="mBoxes">—</span></div>
+      </div>
+
+      <div class="inspector-block">
+        <h4>问题定位 <span id="issueCount">0</span></h4>
+        <div class="issues" id="issueList"></div>
+      </div>
+
+      <div class="inspector-block">
+        <h4>标注框 <span id="boxCount">0</span></h4>
+        <div class="box-list" id="boxList"></div>
+      </div>
+
+      <div class="inspector-block">
+        <h4>复核备注 <span>LOCAL</span></h4>
+        <label class="note-label" for="note">REVIEW NOTE</label>
+        <textarea id="note" placeholder="例如：第 3 个框与第 1 个框重复，退回重标；空标签需确认是否真负样本。"></textarea>
+        <div class="actions">
+          <button class="btn btn--pass" id="btnPass">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 13l4 4L19 7"/></svg>
+            通过 <span class="mono" style="font-size:9px;opacity:.6">P</span>
+          </button>
+          <button class="btn btn--reject" id="btnReject">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            打回 <span class="mono" style="font-size:9px;opacity:.6">X</span>
+          </button>
+        </div>
+        <div class="next-hint" id="nextHint">选择样本开始复核</div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- ================= 规则 ================= -->
+<section class="view" id="view-rules" hidden>
+  <div class="doc"><div class="doc__inner">
+    <div class="doc-head">
+      <div>
+        <div class="eyebrow">Rule Engine / 01</div>
+        <h2>把“数据不干净”<br><em>拆成可执行的检查项</em></h2>
+        <p class="lede">标注质检最怕两件事：只靠人眼看，和只报一个“有问题”。这套规则把问题落到具体样本、具体框，并区分 error（必须退回）与 warn（需要人确认）。</p>
+      </div>
+    </div>
+
+    <div class="rule-grid" id="ruleGrid"></div>
+
+    <h2 style="font-size:18px;margin:26px 0 4px">阈值配置</h2>
+    <p class="lede" style="margin-top:0;font-size:11.5px">阈值集中放在一处，按业务调整；当前值与 Python 审计 CLI 完全一致，保证网页复核与离线批处理口径相同。</p>
+    <table class="thresholds">
+      <thead><tr><th>PARAM</th><th>VALUE</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">min_wh</td><td class="mono">0.002</td><td>归一化宽或高低于此值 → 零面积框</td></tr>
+        <tr><td class="mono">tiny_area</td><td class="mono">0.0005</td><td>归一化面积低于此值 → 过小框，warn</td></tr>
+        <tr><td class="mono">dup_iou</td><td class="mono">0.85</td><td>两个框 IoU 达到此值 → 重复框</td></tr>
+        <tr><td class="mono">max_aspect</td><td class="mono">8.0</td><td>长宽比超过 → 异常框，warn</td></tr>
+        <tr><td class="mono">coord_tol</td><td class="mono">1e-6</td><td>坐标越界的容差</td></tr>
+      </tbody>
+    </table>
+  </div></div>
+</section>
+
+<!-- ================= 系统测试 ================= -->
+<section class="view" id="view-test" hidden>
+  <div class="doc"><div class="doc__inner">
+    <div class="doc-head">
+      <div>
+        <div class="eyebrow">Regression / 02</div>
+        <h2>规则不是写完就算，<br><em>要能证明它抓得到</em></h2>
+        <p class="lede">样例集里预置了 24 个已知缺陷（8 类规则，每类 3 个），只把“真值”交给测试页，不交给复核页。规则引擎跑完后与真值逐条比对，统计命中与误报。</p>
+      </div>
+    </div>
+    <div class="test-summary">
+      <div class="test-kpi"><b id="tRecall">—</b><span>预置缺陷命中率</span></div>
+      <div class="test-kpi"><b id="tFalse" style="color:var(--amber)">—</b><span>误报样本（本批）</span></div>
+      <div class="test-kpi"><b id="tCases" style="color:var(--blue)">—</b><span>覆盖规则</span></div>
+    </div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>SAMPLE</th><th>预置缺陷</th><th>规则检出</th><th>结果</th><th>说明</th></tr></thead>
+        <tbody id="truthRows"></tbody>
+      </table>
+    </div>
+    <h2 style="font-size:18px;margin:26px 0 8px">边界用例设计</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>#</th><th>用例</th><th>预期</th><th>当前状态</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">T01</td><td>标签文件为空</td><td>warn，人工确认是否真负样本</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T02</td><td>类别 id 超出 0..N-1</td><td>error，定位到框</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T03</td><td>框坐标越界（x2 &gt; 1）</td><td>error，定位到框</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T04</td><td>零面积 / 极小框</td><td>error / warn</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T05</td><td>同图两个框 IoU ≥ 0.85</td><td>error，提示与第几个框重复</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T06</td><td>图片损坏 / 无法解码</td><td>error，跳过该样本并继续批处理</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T07</td><td>标签缺失</td><td>warn，不阻塞整批</td><td><span class="tag-ok">已覆盖</span></td></tr>
+          <tr><td class="mono">T08</td><td>中文路径 / 空格路径</td><td>正常读取</td><td><span class="tag-ok">已覆盖</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="font-size:10.5px;margin-top:10px">T06/T07/T08 由 Python 审计 CLI 的异常分支覆盖；网页端只处理已通过入场体检的数据。两边规则阈值保持一致。</p>
+  </div></div>
+</section>
+
+<!-- ================= 报告 ================= -->
+<section class="view" id="view-report" hidden>
+  <div class="doc"><div class="doc__inner">
+    <div class="doc-head">
+      <div>
+        <div class="eyebrow">Batch Report / 03</div>
+        <h2>复核结果要能<br><em>直接交给标注团队</em></h2>
+        <p class="lede">报告不是“共 N 个问题”，而是按样本、按框、按规则拆开，并附带复核状态与备注。可导出 JSON / CSV，也可以复制成一段退回说明。</p>
+      </div>
+    </div>
+
+    <div class="report-grid">
+      <div>
+        <div class="report-card" style="margin-bottom:12px">
+          <h3>问题类型分布 <span>RULE HITS</span></h3>
+          <div id="issueBars"></div>
+        </div>
+        <div class="report-card">
+          <h3>类别分布 <span>CLASS DIST.</span></h3>
+          <div id="classBars"></div>
+        </div>
+      </div>
+      <div>
+        <div class="report-card" style="margin-bottom:12px">
+          <h3>批次状态 <span>LIVE</span></h3>
+          <div class="checklist" id="reportChecks"></div>
+          <div class="report-actions">
+            <button class="btn" id="exportJson">导出 JSON</button>
+            <button class="btn" id="exportCsv">导出 CSV</button>
+            <button class="btn" id="resetReviews">重置复核</button>
+          </div>
+        </div>
+        <div class="report-card">
+          <h3>退回说明 <span>MARKDOWN</span></h3>
+          <textarea class="copybox" id="handoff" readonly></textarea>
+          <div class="report-actions">
+            <button class="btn btn--pass" id="copyHandoff">复制退回说明</button>
+            <a class="btn" href="../../reports/audit.html" target="_blank" rel="noopener">打开 Python 审计报告 ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="../../assets/js/qa-console.js"></script>
+</body>
+</html>

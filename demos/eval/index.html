@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detection Eval Lab · 检测评估与错误分析</title>
+<meta name="description" content="用真实 GT 与模型预测做检测评估：Precision/Recall/F1/mAP、置信度阈值、IoU、NMS、FP/FN 错误分析。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070a0f'/%3E%3Cpath d='M6 24V8m0 16h20M10 19l4-5 4 3 5-8' stroke='%2337e0b2' stroke-width='1.6' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../assets/css/eval.css">
+</head>
+<body>
+
+<header class="appbar">
+  <a class="brand" href="../../index.html">
+    <span class="brand__mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 20V4m0 16h16M7 16l4-5 4 3 5-8"/>
+      </svg>
+    </span>
+    <b>EVAL LAB</b>
+    <span>检测评估 / 错误分析</span>
+  </a>
+  <nav class="topnav">
+    <a href="../../index.html">主页</a>
+    <a href="../qa/">2D 质检</a>
+    <a href="../spatial/">3D 空间</a>
+    <a class="on" href="./">检测评估</a>
+    <a href="../../portfolio-slides.html">作品集</a>
+  </nav>
+  <div class="top-right">
+    <span class="pill">SIM-YOLOv8n · 96 IMAGES</span>
+    <a class="ghost" href="../../index.html">← 返回主页</a>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="stat__k">Precision</div><div class="stat__v mint" id="mPrecision">—</div><div class="stat__hint" id="cTP">TP —</div></div>
+  <div class="stat"><div class="stat__k">Recall</div><div class="stat__v blue" id="mRecall">—</div><div class="stat__hint" id="cFN">FN —</div></div>
+  <div class="stat"><div class="stat__k">F1</div><div class="stat__v" id="mF1">—</div><div class="stat__hint" id="cFP">FP —</div></div>
+  <div class="stat"><div class="stat__k">mAP@0.5</div><div class="stat__v amber" id="mAP">—</div><div class="stat__hint">全量预测</div></div>
+</div>
+
+<main class="workspace">
+  <!-- 样本列表 -->
+  <aside class="panel samples">
+    <div class="panel__head">样本 <span class="mono" id="listCount">LOADING</span></div>
+    <div class="filters" id="filters">
+      <button class="on" data-filter="all">全部</button>
+      <button data-filter="error">只看错误</button>
+      <button data-filter="clean">无错误</button>
+    </div>
+    <div class="sample-list" id="sampleList"></div>
+  </aside>
+
+  <!-- 画布 -->
+  <section class="panel stage-panel">
+    <div class="stage-head">
+      <div class="stage-title">
+        <b id="stageId">—</b>
+        <span id="stageSub">GT / Prediction</span>
+      </div>
+      <div class="stage-tools">
+        <button class="tool on" id="toggleGT">GT</button>
+        <button class="tool on" id="togglePred">PRED</button>
+        <button class="tool" id="prevSample">‹</button>
+        <button class="tool" id="nextSample">›</button>
+      </div>
+    </div>
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <canvas id="canvas"></canvas>
+        <div class="stage-empty" id="stageEmpty">NO IMAGE</div>
+        <div class="stage-hud">
+          <span class="hud-chip" id="hudGt">GT 0</span>
+          <span class="hud-chip" id="hudPred">PRED 0</span>
+          <span class="hud-chip amber" id="hudErr" hidden>ERR 0</span>
+        </div>
+      </div>
+    </div>
+    <div class="stage-foot">
+      <div class="legend">
+        <span><i class="line" style="background:#37e0b2"></i>GT</span>
+        <span><i class="line" style="background:#4cc9f0"></i>TP</span>
+        <span><i class="line" style="background:#ff5d6c"></i>FP</span>
+        <span><i class="line" style="background:#ffc857"></i>FN</span>
+      </div>
+      <div class="keys">阈值 / NMS 改变后，右侧指标会实时重算</div>
+    </div>
+    <div class="errors">
+      <div class="errors__head"><span>当前样本错误 <b id="errorCount">0</b></span><span>FP / FN</span></div>
+      <div class="errors__list" id="errorList"></div>
+    </div>
+  </section>
+
+  <!-- 右栏 -->
+  <aside class="panel side">
+    <div class="control-block">
+      <h4>评估阈值 <span>LIVE</span></h4>
+      <div class="slider-row">
+        <label for="conf">置信度 ≥</label>
+        <input type="range" id="conf" min="0.05" max="0.9" step="0.01" value="0.25">
+        <output id="confVal">0.25</output>
+      </div>
+      <div class="slider-row">
+        <label for="iou">匹配 IoU ≥</label>
+        <input type="range" id="iou" min="0.3" max="0.7" step="0.01" value="0.5">
+        <output id="iouVal">0.50</output>
+      </div>
+      <div class="toggle-row">
+        <label class="switch"><input type="checkbox" id="nms" checked>类别内 NMS</label>
+        <label class="switch"><input type="checkbox" id="hideLow">只画错误</label>
+      </div>
+    </div>
+
+    <div class="control-block">
+      <h4>每类指标 <span>AP@0.5</span></h4>
+      <table class="class-table">
+        <thead><tr><th>类别</th><th>P</th><th>R</th><th>AP</th></tr></thead>
+        <tbody id="classTable"></tbody>
+      </table>
+    </div>
+
+    <div class="pr-wrap">
+      <h4 style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);margin-bottom:6px">PR CURVE / 全量预测</h4>
+      <canvas id="pr" width="560" height="260"></canvas>
+      <div class="pr-legend" id="prLegend"></div>
+    </div>
+
+    <div class="notes">
+      <details>
+        <summary>怎么读这张图？（老师版）</summary>
+        <p><b>Precision</b> = TP / (TP+FP)：报出来的框有多少是对的。</p>
+        <p><b>Recall</b> = TP / (TP+FN)：该找的目标找回了多少。</p>
+        <p><b>F1</b> = 2PR/(P+R)：P/R 的平衡。</p>
+        <p><b>mAP</b>：每个类别 PR 曲线下面积的平均；越高越好，但要看 IoU 阈值和数据集。</p>
+        <p><b>NMS</b>：去掉同一目标的重复框。打开后 FP 通常会下降，Recall 可能略降。</p>
+        <p>当前预测是<b>模拟输出</b>，用于教学/演示；真实项目把 <code>pred</code> 换成模型输出即可。</p>
+      </details>
+    </div>
+
+    <div class="side-foot">
+      <button class="btn" id="exportJson">导出 JSON</button>
+      <button class="btn btn--accent" id="exportCsv">导出错误清单</button>
+    </div>
+  </aside>
+</main>
+
+<div class="toast" id="toast"></div>
+<script type="module" src="../../assets/js/eval-lab.js"></script>
+</body>
+</html>
+

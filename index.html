@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>视觉数据工程 · 作品集</title>
+<meta name="description" content="虚拟现实技术应用专科应届，视觉数据工程方向：标注质检、3D 点云检查、检测评估与错误分析。">
+<meta name="theme-color" content="#06090e">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="nav__in">
+    <a class="brand" href="index.html">
+      <span class="brand__mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M12 2.8 21 8v8l-9 5.2L3 16V8l9-5.2Z"/><path d="M12 2.8v18.4M3 8l9 5 9-5" opacity=".55"/>
+        </svg>
+      </span>
+      <b>VISUAL DATA / PORTFOLIO</b>
+      <span>2026</span>
+    </a>
+    <nav class="nav__links">
+      <a href="#work">作品</a>
+      <a href="#stack">技术</a>
+      <a href="#about">关于</a>
+      <a href="https://github.com/xiaoqzhenhao" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <div class="nav__cta">
+      <a class="btn btn--ghost" href="portfolio-slides.html">演示版</a>
+      <a class="btn btn--primary" href="作品集-演示版.pdf">作品集 PDF
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__grid">
+        <div>
+          <div class="hero__badge"><i></i>DATA ENGINEER · 3D VISION · SHENZHEN</div>
+          <h1>把空间感，变成<em>视觉数据的质量</em>。</h1>
+          <p class="hero__sub">
+            虚拟现实技术应用 · 专科应届。目标：<b>视觉数据工程 / 3D 空间数据</b>。
+            三个可交互作品：把标注问题定位到<b>第几张图、第几个框</b>；把 3D 框放进点云里检查<b>空间覆盖</b>；
+            把 YOLO 输出的 <b>FP/FN</b> 摊开做错误分析。
+          </p>
+          <div class="hero__chips">
+            <span class="chip hot">Python · Linux</span>
+            <span class="chip">COCO / YOLO</span>
+            <span class="chip">标注质检</span>
+            <span class="chip">Three.js / 点云</span>
+            <span class="chip">可实习 · 随时到岗</span>
+          </div>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#work">看三个作品
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg>
+            </a>
+            <a class="btn" href="portfolio-slides.html">作品集演示版</a>
+            <a class="btn btn--ghost" href="https://github.com/xiaoqzhenhao" target="_blank" rel="noopener">GitHub</a>
+          </div>
+          <div class="hero__note">所有数字可在本地复现 · 合成数据 / 模拟预测已标注 · 不冒充真实产线</div>
+        </div>
+        <div class="match reveal">
+          <div class="match__head"><b>SELECTED WORK</b><span>03 PROJECTS · 01 CLI</span></div>
+          <div class="match__body">
+            <div class="match__row"><span><i class="ok"></i>视觉数据质检 · 120 图 / 789 框</span><span class="match__tag ok">24/24</span></div>
+            <div class="match__row"><span><i class="ok"></i>3D 点云检查 · 15,318 点 / 9 框</span><span class="match__tag ok">空框检出</span></div>
+            <div class="match__row"><span><i class="ok"></i>检测评估 · 96 图 / 641 GT</span><span class="match__tag ok">mAP .757</span></div>
+            <div class="match__row"><span><i class="ok"></i>数据审计 CLI · 8 类检查</span><span class="match__tag ok">0.33s</span></div>
+            <div class="match__row"><span><i class="mid"></i>C++ / PyTorch 训练</span><span class="match__tag mid">在补</span></div>
+          </div>
+          <div class="match__preview">
+            <img src="assets/media/qa-cover.jpg" alt="视觉数据质检工作台">
+            <span>LIVE DEMO · 24 DEFECTS / 100% HIT</span>
+          </div>
+          <div class="match__foot"><b>优势：</b>3D 空间理解 + 数据工程化。<br><b>边界：</b>C++ / 模型训练不是现成强项，在补，不包装成精通。</div>
+        </div>
+      </div>
+      <div class="metrics reveal">
+        <div class="metric"><b>120 / 789</b><span>视觉数据 / 标注框</span><em>自建仓库样例 · 5 类</em></div>
+        <div class="metric"><b class="mint">24 / 24</b><span>预置缺陷命中</span><em>8 条规则 · 本批 0 误报</em></div>
+        <div class="metric"><b>15,318 / 9</b><span>点云 / 3D 框</span><em>3D 空间质检</em></div>
+        <div class="metric"><b>0.757</b><span>mAP@0.5</span><em>96 图 / 641 GT</em></div>
+        <div class="metric"><b>0.33s</b><span>120 样本批处理</span><em>Python CLI</em></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="work">
+    <div class="wrap">
+      <div class="section__head reveal">
+        <div><div class="eyebrow">01 / SELECTED WORK</div><h2>三个能点开的作品，<em>不是截图</em></h2></div>
+        <p>每个作品都有可交互 Demo、技术说明和可复现数字。<b>点开就能用，不是 PPT。</b></p>
+      </div>
+      <div class="work-grid work-grid--3">
+        <article class="work reveal">
+          <div class="work__img"><span class="work__num">01 / DATA QA</span><img src="assets/media/qa-cover.jpg" alt="视觉数据质检工作台"></div>
+          <div class="work__body">
+            <div class="work__kicker">ANNOTATION QA CONSOLE</div><h3>视觉数据质检工作台</h3>
+            <p>120 张自建仓库图，8 条规则；逐样本、逐框定位问题；通过/打回/备注/退回单；JSON/CSV/HTML 导出。</p>
+            <div class="work__stats"><span><b>120</b> 样本</span><span><b>789</b> 框</span><span><b>24/24</b> 命中</span><span><b>0.33s</b> CLI</span></div>
+            <div class="work__links"><a href="demos/qa/">打开 Demo ↗</a><a href="portfolio-slides.html">演示版</a></div>
+          </div>
+        </article>
+        <article class="work reveal">
+          <div class="work__img"><span class="work__num">02 / 3D SPATIAL</span><img src="assets/media/spatial-cover.jpg" alt="3D 空间感知标注检查器"></div>
+          <div class="work__body">
+            <div class="work__kicker">SPATIAL ANNOTATION INSPECTOR</div><h3>3D 空间感知标注检查器</h3>
+            <p>15,318 点云 / 9 个 3D 框；框内点数、体积、密度、长宽比；空框/稀疏/尺寸异常标记。</p>
+            <div class="work__stats"><span><b>15,318</b> 点</span><span><b>9</b> 个 3D 框</span><span><b>1</b> 个空框</span><span><b>JSON</b> 报告</span></div>
+            <div class="work__links"><a href="demos/spatial/">打开 Demo ↗</a><a href="portfolio-slides.html">演示版</a></div>
+          </div>
+        </article>
+        <article class="work reveal">
+          <div class="work__img"><span class="work__num">03 / EVAL</span><img src="assets/media/eval-cover.jpg" alt="检测评估与错误分析"></div>
+          <div class="work__body">
+            <div class="work__kicker">DETECTION EVAL LAB</div><h3>检测评估与错误分析</h3>
+            <p>96 图 / 641 GT；置信度 / IoU / NMS 实时重算；P/R/F1/mAP、PR 曲线、FP/FN 错误定位。</p>
+            <div class="work__stats"><span><b>96</b> 图</span><span><b>641</b> GT</span><span><b>0.757</b> mAP</span><span><b>FP/FN</b></span></div>
+            <div class="work__links"><a href="demos/eval/">打开 Demo ↗</a><a href="portfolio-slides.html">演示版</a></div>
+          </div>
+        </article>
+        <article class="work work--wide reveal">
+          <div class="work__body">
+            <div class="work__split">
+              <div>
+                <div class="work__kicker">04 / DATA PIPELINE</div><h3>数据集审计 CLI</h3>
+                <p style="margin-bottom:12px">不依赖标注平台的数据集“入场体检”：空标签、越界、零面积、过小、重复、类别越界、长宽比、解析错误；多进程/线程、COCO 导出、CI 退出码。</p>
+                <div class="work__stats"><span><b>120</b> 样本</span><span><b>0.33s</b> 批处理</span><span><b>8</b> 类检查</span><span><b>24/24</b> 真值</span></div>
+                <div class="work__links"><a href="portfolio-slides.html">看演示版</a></div>
+              </div>
+              <div class="term">
+<span class="d">$</span> python tools/audit_dataset.py \<br>
+&nbsp;&nbsp;--dataset dataset --jobs 8<br>
+<span class="c">[audit]</span> 120 samples, 5 classes, 8 workers<br>
+<span class="c">[audit]</span> seeded truth hit 24/24<br>
+<span class="c">[audit]</span> done in 0.33s<br>
+&nbsp;&nbsp;samples=120 boxes=789<br>
+&nbsp;&nbsp;pass=80.0% <span class="e">errors=15</span> <span class="w">warnings=9</span><br>
+<span class="c">[audit]</span> report -&gt; reports/audit.html
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="stack">
+    <div class="wrap">
+      <div class="section__head reveal">
+        <div><div class="eyebrow">02 / TECH STACK</div><h2>这些作品用到的技术</h2></div>
+        <p>不是“我会什么”，而是“数据怎么从 A 到 B”。</p>
+      </div>
+      <div class="three" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="card" style="border:1px solid var(--line);border-radius:10px;padding:14px;background:rgba(9,14,21,.55)"><h3 style="font-size:16px">数据层</h3><p style="font-size:11.5px;color:var(--dim);line-height:1.7">Python / Pillow / JSON；生成图、解析 YOLO/COCO、跑审计 CLI。YOLO 归一化，COCO 像素，id 差 1。</p></div>
+        <div class="card" style="border:1px solid var(--line);border-radius:10px;padding:14px;background:rgba(9,14,21,.55)"><h3 style="font-size:16px">页面层</h3><p style="font-size:11.5px;color:var(--dim);line-height:1.7">HTML / CSS / JS；fetch 数据、Canvas 画框、localStorage 存复核状态。</p></div>
+        <div class="card" style="border:1px solid var(--line);border-radius:10px;padding:14px;background:rgba(9,14,21,.55)"><h3 style="font-size:16px">3D 层</h3><p style="font-size:11.5px;color:var(--dim);line-height:1.7">Three.js；Scene/Camera/Renderer、BufferGeometry + Points、Raycaster 选框。</p></div>
+        <div class="card" style="border:1px solid var(--line);border-radius:10px;padding:14px;background:rgba(9,14,21,.55)"><h3 style="font-size:16px">评估层</h3><p style="font-size:11.5px;color:var(--dim);line-height:1.7">IoU / NMS / AP；TP/FP/FN 匹配、P/R/F1、per-class AP、PR 曲线。</p></div>
+        <div class="card" style="border:1px solid var(--line);border-radius:10px;padding:14px;background:rgba(9,14,21,.55)"><h3 style="font-size:16px">交付层</h3><p style="font-size:11.5px;color:var(--dim);line-height:1.7">Linux / Git / Node 静态服务器；批处理、版本管理、本地预览。</p></div>
+        <div class="card" style="border:1px solid var(--line);border-radius:10px;padding:14px;background:rgba(9,14,21,.55)"><h3 style="font-size:16px">边界</h3><p style="font-size:11.5px;color:var(--dim);line-height:1.7">数据自建、Eval 预测为模拟；不冒充真实产线，不声称训练过大模型。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap">
+      <div class="section__head reveal">
+        <div><div class="eyebrow">03 / ABOUT</div><h2>关于我</h2></div>
+      </div>
+      <p class="lead-quote reveal">虚拟现实技术应用专科应届，目标视觉数据工程。<em>我不跟本科拼算法，我跟他们拼“数据能不能落地”。</em></p>
+      <p style="max-width:760px;color:var(--dim);font-size:13px;line-height:1.8">我的优势是 3D 空间理解 + Python/Linux 数据工程化；短板是 C++ 和模型训练，正在补，不包装成精通。你可以直接打开上面的 Demo，所有数字都能在本地复现。</p>
+      <div class="hero__actions" style="margin-top:18px">
+        <a class="btn btn--primary" href="portfolio-slides.html">看作品集演示版</a>
+        <a class="btn" href="作品集-演示版.pdf">下载作品集 PDF</a>
+        <a class="btn btn--ghost" href="https://github.com/xiaoqzhenhao" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__cta reveal">
+        <div><div class="eyebrow">PORTFOLIO / 2026</div><h2>先看作品，<br>再聊<em>能不能干活</em>。</h2><p>个人练习作品；合成数据与模拟预测已标注，不冒充真实产线。</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn--primary" href="portfolio-slides.html">打开演示版</a><a class="btn" href="portfolio-slides.html">作品集演示版</a></div>
+      </div>
+      <div class="footer__bottom"><span>© 2026 · Visual Data Portfolio</span><span><a href="https://github.com/xiaoqzhenhao" target="_blank" rel="noopener">GitHub</a> · <a href="portfolio-slides.html">Deck</a></span></div>
+    </div>
+  </footer>
+</main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spatial Lab · 3D 空间感知标注检查器</title>
+<meta name="description" content="用 Three.js 呈现仓库点云与 3D 标注框，检查空框、稀疏框与尺寸异常，面向 3D 视觉数据质检。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305080d'/%3E%3Cpath d='M7 23 16 7l9 16H7Z' fill='none' stroke='%2337e0b2' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='18' r='2' fill='%235b8cff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../assets/css/spatial.css">
+</head>
+<body>
+
+<div id="scene"></div>
+<div id="labels"></div>
+
+<header class="topbar">
+  <a class="brand" href="../../index.html">
+    <span class="brand__mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M12 3 20 7.5v9L12 21 4 16.5v-9L12 3Z"/><path d="M12 3v18M4 7.5l8 4.5 8-4.5" opacity=".55"/>
+      </svg>
+    </span>
+    <b>SPATIAL LAB</b>
+    <span>3D ANNOTATION QA / v1.0</span>
+  </a>
+  <nav class="topnav">
+    <a href="../../index.html">主页</a>
+    <a href="../qa/">2D 质检</a>
+    <a class="on" href="./">3D 空间</a>
+    <a href="../../portfolio-slides.html">作品集</a>
+  </nav>
+  <div class="top-right">
+    <span class="pill">POINT CLOUD · SYNTHETIC</span>
+    <a class="ghost" href="../../index.html">← 返回主页</a>
+  </div>
+</header>
+
+<!-- 左栏 -->
+<aside class="panel panel-left">
+  <div class="panel__head"><b>SCENE / WAREHOUSE-A</b><span>FRAME 001</span></div>
+  <div class="panel__body">
+    <div class="eyebrow">SPATIAL QA / 03</div>
+    <h1>把 3D 空间<br><em>也纳入质检</em></h1>
+    <p class="lede">2D 框只能看“画面里有没有”，3D 框还要看“空间里对不对”。这个场景用 1.53 万点合成仓库点云，检查空框、稀疏框、尺寸异常与点数分布。</p>
+
+    <div class="stat-row">
+      <div class="stat-cell"><b id="statPoints">—</b><span>POINTS</span></div>
+      <div class="stat-cell"><b id="statBoxes">—</b><span>3D BOXES</span></div>
+      <div class="stat-cell"><b class="amber" id="statFlags">—</b><span>FLAGGED</span></div>
+    </div>
+
+    <div class="legend">
+      <div class="legend__t">CLASS LEGEND / 点击右侧列表或场景标签</div>
+      <div class="legend__row"><i style="background:#9bdc5a"></i>货架 <em>shelf</em></div>
+      <div class="legend__row"><i style="background:#4cc9f0"></i>托盘 <em>pallet</em></div>
+      <div class="legend__row"><i style="background:#ffc857"></i>叉车 <em>forklift</em></div>
+      <div class="legend__row"><i style="background:#ff6b6b"></i>人员 <em>person</em></div>
+      <div class="legend__row"><i style="background:#f72585"></i>锥桶 <em>cone</em></div>
+    </div>
+
+    <div class="controls">
+      <div class="control-row">
+        <label>点云着色</label>
+        <div class="seg" id="colorMode">
+          <button class="on" data-mode="class">类别</button>
+          <button data-mode="height">高度</button>
+          <button data-mode="intensity">强度</button>
+        </div>
+      </div>
+      <div class="control-row">
+        <label>显示</label>
+        <div style="display:flex;gap:10px">
+          <label class="switch"><input type="checkbox" id="toggleBoxes" checked>框</label>
+          <label class="switch"><input type="checkbox" id="toggleLabels" checked>标签</label>
+          <label class="switch"><input type="checkbox" id="autoRotate">旋转</label>
+        </div>
+      </div>
+      <div class="control-row">
+        <label>点大小</label>
+        <div class="slider-row" style="flex:1"><input type="range" id="pointSize" min="1" max="8" value="3" step="0.5"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnTop">顶视图</button>
+        <button class="btn" id="btnReset">复位视角</button>
+        <button class="btn btn--accent" id="btnAudit">自动巡检</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- 右栏 -->
+<aside class="panel panel-right">
+  <div class="panel__head"><b>INSPECTOR</b><span id="selIndex">BOX 01 / 09</span></div>
+  <div class="sel-head">
+    <div class="sel-id">SELECTED 3D BOX</div>
+    <div class="sel-name">
+      <h2 id="selName">货架 A</h2>
+      <span class="verdict pass" id="selVerdict">PASS</span>
+    </div>
+  </div>
+  <div class="metrics">
+    <div class="metric"><b>CLASS</b><span id="selClass">shelf / 0</span></div>
+    <div class="metric"><b>POINTS IN BOX</b><span id="selPoints">—</span></div>
+    <div class="metric"><b>CENTER (X,Y,Z)</b><span id="selCenter">—</span></div>
+    <div class="metric"><b>SIZE (W,H,D)</b><span id="selSize">—</span></div>
+    <div class="metric"><b>VOLUME</b><span id="selVolume">—</span></div>
+    <div class="metric"><b>DENSITY</b><span id="selDensity">—</span></div>
+  </div>
+  <div class="flags">
+    <div class="flags__t">RULE FLAGS</div>
+    <div id="selFlags"><span class="no-flag">✓ 未命中质检规则</span></div>
+  </div>
+  <div class="box-list" id="boxList"></div>
+  <div class="panel-foot">
+    <button class="btn" id="prevBox">‹ 上一框</button>
+    <button class="btn btn--accent" id="nextFlag">下一处问题 ›</button>
+  </div>
+</aside>
+
+<div class="bottombar">
+  <div class="keys">
+    <span><kbd>拖拽</kbd> 旋转</span>
+    <span><kbd>滚轮</kbd> 缩放</span>
+    <span><kbd>点击</kbd> 选框</span>
+    <span><kbd>R</kbd> 复位</span>
+    <span><kbd>G</kbd> 框</span>
+    <span><kbd>L</kbd> 标签</span>
+    <span><kbd>[</kbd><kbd>]</kbd> 切换</span>
+  </div>
+  <div class="hint">合成点云 · 非真实产线数据 · 用于展示质检逻辑</div>
+  <div class="fps" id="fps">-- FPS</div>
+</div>
+
+<div class="loading" id="loading">
+  <div class="loading__in"><div class="loading__spin"></div><p>BUILDING POINT CLOUD</p></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "../../vendor/three/three.module.js",
+    "three/addons/": "../../vendor/three/"
+  }
+}
+</script>
+<script type="module" src="../../assets/js/spatial.js"></script>
+</body>
+</html>
+

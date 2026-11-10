@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>视觉数据工程 · 作品集演示版</title>
+<meta name="description" content="7 页 16:9 作品集：三个作品案例、技术链路、30 秒演示。">
+<style>
+  :root{--ink:#17212b;--ink-2:#3d4b5a;--dim:#6d7b8b;--line:#dfe6ee;--mint:#0b7a70;--mint-2:#37e0b2;--paper:#fff;--mono:ui-monospace,"SFMono-Regular",Consolas,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#cfd6de;color:var(--ink);font:14px/1.55 "Inter",-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;padding:20px 10px 50px}
+  .toolbar{width:min(1280px,calc(100% - 2px));margin:0 auto 12px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:7px;position:sticky;top:0;z-index:10}
+  .toolbar b{font-size:12px}.toolbar span{font-family:var(--mono);font-size:8px;color:var(--dim)}
+  .toolbar button{border:1px solid var(--line);background:#fff;color:var(--ink-2);border-radius:5px;padding:5px 9px;font:inherit;font-size:10px;cursor:pointer}
+  .toolbar button.p{background:var(--mint);border-color:var(--mint);color:#fff}
+  .slide{width:1280px;height:720px;margin:0 auto 16px;background:var(--paper);box-shadow:0 10px 36px rgba(20,30,40,.16);position:relative;overflow:hidden}
+  .slide--dark{background:#0a1017;color:#edf4fb}
+  .pad{position:absolute;inset:0;padding:52px 64px 44px;display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--dim);border-bottom:1px solid var(--line);padding-bottom:8px}
+  .slide--dark .top{border-bottom-color:rgba(255,255,255,.14);color:#8fa0b3}
+  .top .l{display:flex;align-items:center;gap:7px}.top .l i{width:6px;height:6px;border-radius:50%;background:var(--mint-2)}
+  .kicker{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--mint);text-transform:uppercase;margin-top:22px}
+  .slide--dark .kicker{color:var(--mint-2)}
+  h1{font-size:54px;line-height:1.06;letter-spacing:-.055em;font-weight:780;margin-top:8px;max-width:900px}
+  h1 em{font-style:normal;color:var(--mint)}
+  .slide--dark h1 em{color:var(--mint-2)}
+  h2{font-size:34px;line-height:1.12;letter-spacing:-.045em;font-weight:760;margin:5px 0 8px}
+  h3{font-size:18px;font-weight:700;letter-spacing:-.02em}
+  h4{font-size:12px;font-family:var(--mono);letter-spacing:.06em;color:var(--mint);margin-bottom:4px}
+  p{color:var(--ink-2)}
+  .slide--dark p{color:#b6c6d8}
+  .muted{color:var(--dim)}
+  .lead{font-size:15px;line-height:1.7;max-width:730px;margin-top:10px}
+  .rule{height:2px;background:var(--ink);margin-top:14px;width:100%}
+  .slide--dark .rule{background:#edf4fb}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16);margin-top:auto}
+  .metrics div{background:#0a1017;padding:14px 16px}
+  .metrics b{display:block;font-size:27px;line-height:1.1;color:var(--mint-2);letter-spacing:-.035em}
+  .metrics span{display:block;font-family:var(--mono);font-size:8.5px;color:#8fa0b3;margin-top:3px}
+  .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}
+  .thumbs img{width:100%;height:150px;object-fit:cover;border:1px solid rgba(255,255,255,.18);border-radius:5px;display:block}
+  .thumbs span{display:block;font-family:var(--mono);font-size:8px;color:#8fa0b3;margin-top:4px}
+
+  .two{display:grid;grid-template-columns:1.08fr .92fr;gap:34px;margin-top:22px;min-height:0}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .card{border:1px solid var(--line);border-radius:7px;background:#fbfcfd;padding:13px 14px}
+  .card h3{font-size:15px;margin-bottom:4px}
+  .card p{font-size:11.5px;line-height:1.6}
+  .card .n{font-family:var(--mono);font-size:8px;color:var(--mint);letter-spacing:.08em;display:block;margin-bottom:4px}
+  .shot{width:100%;height:420px;object-fit:cover;border:1px solid var(--line);border-radius:6px;display:block}
+  .case{display:flex;flex-direction:column;gap:10px}
+  .case h3{font-size:25px;line-height:1.15;letter-spacing:-.03em}
+  .case .meta{font-family:var(--mono);font-size:8.5px;color:var(--dim)}
+  .case .block{display:grid;grid-template-columns:52px 1fr;gap:7px;border-top:1px solid var(--line);padding-top:7px}
+  .case .block b{font-family:var(--mono);font-size:8px;color:var(--mint);letter-spacing:.05em;padding-top:2px}
+  .case .block p{font-size:11.5px;line-height:1.6}
+  .case .block p b{color:var(--ink);font-weight:650}
+  .statline{display:flex;gap:18px;border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
+  .statline div b{display:block;font-size:19px;color:var(--mint);line-height:1.1;letter-spacing:-.02em}
+  .statline div span{font-family:var(--mono);font-size:7.5px;color:var(--dim)}
+  .flow{display:flex;gap:5px;align-items:center;margin-top:12px}
+  .flow div{flex:1;border:1px solid var(--line);border-radius:4px;background:#fbfcfd;padding:7px 6px;text-align:center;font-size:8.5px;line-height:1.35;color:var(--ink-2)}
+  .flow i{font-style:normal;color:var(--mint);font-size:11px}
+  .stack{margin-top:12px;display:flex;flex-wrap:wrap;gap:5px}
+  .stack span{font-family:var(--mono);font-size:8px;color:var(--ink-2);border:1px solid var(--line);background:#fbfcfd;border-radius:3px;padding:2px 6px}
+  .callout{margin-top:10px;border-left:3px solid var(--mint);background:#f2faf7;padding:8px 11px;font-size:11px;line-height:1.6;color:var(--ink-2)}
+  .callout b{color:var(--mint)}
+  .demo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+  .demo div{border:1px solid rgba(255,255,255,.14);border-radius:6px;background:#111a24;padding:11px 12px}
+  .slide--dark .demo b{color:#e9f0f9}
+  .slide--dark .demo p{color:#b6c6d8}
+  .demo b{display:block;font-size:13px;margin-bottom:3px}
+  .demo p{font-size:10.5px;line-height:1.55}
+  .footer{position:absolute;left:64px;right:64px;bottom:18px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--dim)}
+  .slide--dark .footer{color:#8fa0b3}
+  @media print{@page{size:1280px 720px;margin:0}body{background:#fff;padding:0}.toolbar{display:none!important}.slide{margin:0;box-shadow:none;page-break-after:always}.slide:last-child{page-break-after:auto}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  @media screen and (max-width:1320px){body{padding:8px 0 30px}.toolbar{width:100%;border-radius:0;margin-bottom:8px}.slide{width:100%;height:auto;min-height:0;padding-bottom:30px}.pad{position:static;padding:24px 20px 40px}.two{grid-template-columns:1fr}.shot{height:auto}.metrics{grid-template-columns:1fr 1fr}.thumbs{grid-template-columns:1fr 1fr}.footer{position:static;margin-top:16px}}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div><b>作品集 · 演示版</b> <span>7 SLIDES · 16:9</span></div>
+  <div style="display:flex;gap:6px">
+    <a href="index.html" style="border:1px solid #dfe6ee;border-radius:5px;padding:5px 9px;font-size:10px;color:#3d4b5a;text-decoration:none">主页</a>
+    <button class="p" onclick="window.print()">打印 / 存 PDF</button>
+  </div>
+</div>
+
+<!-- 1 COVER -->
+<section class="slide slide--dark">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>PORTFOLIO / 2026</div><div>VISUAL DATA · 2026</div></div>
+    <div class="kicker">DATA ENGINEER / 3D VISION</div>
+    <h1>把空间感，<br>变成<em>视觉数据的质量</em>。</h1>
+    <p class="lead">虚拟现实技术应用 · 专科应届。三个可交互作品：2D 标注质检、3D 点云检查、检测评估；外加一个数据审计 CLI。每个数字都能在本地复现。</p>
+    <div class="thumbs">
+      <div><img src="assets/media/qa-cover.jpg" alt="QA Console"><span>01 / ANNOTATION QA</span></div>
+      <div><img src="assets/media/spatial-cover.jpg" alt="Spatial Lab"><span>02 / 3D SPATIAL</span></div>
+      <div><img src="assets/media/eval-cover.jpg" alt="Eval Lab"><span>03 / DETECTION EVAL</span></div>
+    </div>
+    <div class="metrics">
+      <div><b>120 / 789</b><span>视觉数据 / 标注框</span></div>
+      <div><b>24 / 24</b><span>预置缺陷命中</span></div>
+      <div><b>15,318 / 9</b><span>点云 / 3D 框</span></div>
+      <div><b>0.757</b><span>mAP@0.5 / 96 图</span></div>
+    </div>
+    <div class="footer"><span>个人练习作品 · 合成数据/模拟预测已标注</span><span>01 / 07</span></div>
+  </div>
+</section>
+
+<!-- 2 POSITIONING -->
+<section class="slide">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>01 / POSITIONING</div><div>为什么是数据工程师</div></div>
+    <div class="kicker">我不跟本科拼算法，我跟他们拼“数据能不能落地”。</div>
+    <h2>我关注实时三维视觉感知；<br>我做的是让 2D/3D 数据可采集、可标注、可质检。</h2>
+    <div class="three">
+      <div class="card"><span class="n">01 / DATA</span><h3>数据工程</h3><p>120 张 / 5 类 / 789 框；采集、清洗、标注质检、报告、COCO 导出跑通一条链路。</p></div>
+      <div class="card"><span class="n">02 / 3D</span><h3>3D 空间</h3><p>15,318 点 / 9 个 3D 框；框内点数、体积、密度、空框/稀疏/尺寸异常检查。</p></div>
+      <div class="card"><span class="n">03 / EVAL</span><h3>检测评估</h3><p>96 图 / 641 GT；置信度、IoU、NMS 实时重算，FP/FN 定位到样本。</p></div>
+    </div>
+    <div class="callout"><b>能力覆盖：</b>采集/标注/质检、Linux/Python、AI 流程理解，分别由四个作品覆盖；3D 空间是差异化。C++/PyTorch 有基础，不包装成精通。</div>
+    <div class="stack"><span>Python</span><span>Linux</span><span>COCO / YOLO</span><span>标注质检</span><span>3D 点云</span><span>mAP / IoU / NMS</span><span>Three.js</span><span>Git</span></div>
+    <div class="three" style="margin-top:12px">
+      <div class="card"><span class="n">能力 01</span><h3>采集 / 标注 / 管理</h3><p>120 张 / 5 类 / 789 框；YOLO/COCO 双格式；采集→清洗→标注→质检→导出。</p></div>
+      <div class="card"><span class="n">能力 02</span><h3>系统测试</h3><p>8 条规则 + 24 个预置缺陷 24/24 命中；退回单能落到样本/框/规则。</p></div>
+      <div class="card"><span class="n">能力 03</span><h3>3D 空间</h3><p>15,318 点 / 9 个 3D 框；空框/稀疏/尺寸异常检查，AABB 先验证。</p></div>
+    </div>
+    <div class="footer"><span>个人练习作品 · 数据为自建样例</span><span>02 / 07</span></div>
+  </div>
+</section>
+
+<!-- 3 QA -->
+<section class="slide">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>02 / PROJECT · DATA QA</div><div>2026.10 — 至今</div></div>
+    <div class="two">
+      <img class="shot" src="assets/media/qa-cover.jpg" alt="视觉数据质检工作台">
+      <div class="case">
+        <div><div class="kicker">ANNOTATION QA CONSOLE</div><h3>视觉数据质检工作台</h3><div class="meta">独立开发 · Python / YOLO / COCO / Canvas / Linux</div></div>
+        <div class="block"><b>问题</b><p>标注数据里空标签、越界框、零面积、重复框、类别越界混在一起，只靠人眼看既慢又说不清“哪张图、哪个框”。</p></div>
+        <div class="block"><b>做法</b><p>自建 120 张 / 5 类 / 789 框数据；8 条规则；Canvas 逐样本逐框定位；通过/打回/备注/退回单；Python CLI 并发批处理。</p></div>
+        <div class="block"><b>结果</b><p>预置 24 个缺陷 <b>24/24 命中</b>，本批 0 误报；120 张批处理 <b>0.33s</b>；JSON/CSV/HTML 报告可直接交付。</p></div>
+        <div class="statline"><div><b>120 / 789</b><span>数据 / 框</span></div><div><b>24 / 24</b><span>缺陷命中</span></div><div><b>0.33s</b><span>批处理</span></div></div>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:auto"><div>120 图 + YOLO</div><i>→</i><div>解析 / 校验</div><i>→</i><div>8 条规则</div><i>→</i><div>逐框复核</div><i>→</i><div>JSON / CSV / HTML</div></div>
+    <div class="footer"><span>问题 → 做法 → 结果 · 数据为自建样例</span><span>03 / 07</span></div>
+  </div>
+</section>
+
+<!-- 4 SPATIAL -->
+<section class="slide">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>03 / PROJECT · 3D SPATIAL</div><div>2026.10 — 至今</div></div>
+    <div class="two">
+      <img class="shot" src="assets/media/spatial-cover.jpg" alt="3D 空间感知标注检查器">
+      <div class="case">
+        <div><div class="kicker">SPATIAL ANNOTATION INSPECTOR</div><h3>3D 空间感知标注检查器</h3><div class="meta">独立开发 · Three.js / 点云 / 3D BBox</div></div>
+        <div class="block"><b>问题</b><p>2D 框只能看“画面里有没有”，3D 框还要看“空间里对不对”。空框、稀疏框、尺寸异常很难靠肉眼发现。</p></div>
+        <div class="block"><b>做法</b><p>程序化生成 15,318 点仓库点云 + 9 个 3D 框；计算框内点数/体积/密度/长宽比；点击框/标签/列表联动；自动巡检。</p></div>
+        <div class="block"><b>结果</b><p>检出 1 个 GHOST 空框；框内点数/密度一键可查；JSON 质检报告可直接复核。</p></div>
+        <div class="statline"><div><b>15,318</b><span>点云</span></div><div><b>9</b><span>3D 框</span></div><div><b>1</b><span>空框</span></div></div>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:auto"><div>15,318 点云</div><i>→</i><div>9 个 3D 框</div><i>→</i><div>点数 / 密度 / 尺寸</div><i>→</i><div>空框 / 稀疏 / 异常</div><i>→</i><div>JSON 报告</div></div>
+    <div class="footer"><span>空间感 → 可检查指标 · AABB 先验证，真实用 OBB</span><span>04 / 07</span></div>
+  </div>
+</section>
+
+<!-- 5 EVAL -->
+<section class="slide">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>04 / PROJECT · DETECTION EVAL</div><div>2026.11 — 至今</div></div>
+    <div class="two">
+      <img class="shot" src="assets/media/eval-cover.jpg" alt="检测评估与错误分析">
+      <div class="case">
+        <div><div class="kicker">DETECTION EVAL LAB</div><h3>检测评估与错误分析</h3><div class="meta">独立开发 · YOLO 输出 / mAP / NMS / Canvas</div></div>
+        <div class="block"><b>问题</b><p>只报一个 mAP，说不清误检/漏检在哪；调阈值、NMS 对指标的影响也讲不清。</p></div>
+        <div class="block"><b>做法</b><p>GT + 模拟 YOLO 输出；置信度/IoU/NMS 实时重算；TP/FP/FN 可视化；PR 曲线、每类 AP、错误清单。</p></div>
+        <div class="block"><b>结果</b><p>P <b>83.0%</b> / R <b>81.7%</b> / F1 <b>82.4%</b> / mAP@0.5 <b>0.757</b>；能解释阈值/NMS，FP/FN 定位到样本。</p></div>
+        <div class="statline"><div><b>96 / 641</b><span>图 / GT</span></div><div><b>0.757</b><span>mAP@0.5</span></div><div><b>5 类</b><span>per-class AP</span></div></div>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:auto"><div>GT + Pred</div><i>→</i><div>IoU 匹配</div><i>→</i><div>TP / FP / FN</div><i>→</i><div>P / R / AP</div><i>→</i><div>PR 曲线 + 错误清单</div></div>
+    <div class="footer"><span>预测为模拟，评估逻辑真实 · 真实项目替换 pred 即可</span><span>05 / 07</span></div>
+  </div>
+</section>
+
+<!-- 6 HOW IT WORKS -->
+<section class="slide">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>05 / HOW IT WORKS</div><div>技术链路</div></div>
+    <div class="kicker">不是“我会什么”，是“数据怎么从 A 到 B”</div>
+    <h2>一条数据链路，四个可验证环节</h2>
+    <div class="flow"><div>采集 / 自建数据</div><i>→</i><div>解析 / 校验</div><i>→</i><div>标注质检</div><i>→</i><div>3D / 评估</div><i>→</i><div>报告 / 交付</div></div>
+    <div class="three">
+      <div class="card"><span class="n">DATA LAYER</span><h3>数据层</h3><p>Python / Pillow / JSON：生成图、解析 YOLO/COCO、跑审计 CLI。YOLO 归一化，COCO 像素，id 差 1。</p></div>
+      <div class="card"><span class="n">WEB LAYER</span><h3>页面层</h3><p>HTML 骨架 / CSS 布局 / JS 行为；fetch 数据、Canvas 画框、localStorage 存复核状态。</p></div>
+      <div class="card"><span class="n">3D LAYER</span><h3>3D 层</h3><p>Three.js：Scene/Camera/Renderer；BufferGeometry + Points 一次 draw call；Raycaster 选框。</p></div>
+    </div>
+    <div class="callout"><b>面试一句话：</b>“HTML 是骨架，CSS 是布局，JS 是行为；浏览器 fetch 标签 → 解析成框 → 规则/指标 → Canvas/WebGL 渲染 → 报告导出。”</div>
+    <div class="stack"><span>Python</span><span>Pillow</span><span>JSON</span><span>HTML/CSS/JS</span><span>Canvas</span><span>Three.js</span><span>IoU / NMS / AP</span><span>Linux / Git</span></div>
+    <div class="three" style="margin-top:12px">
+      <div class="card"><span class="n">追问 01</span><h3>为什么不用 React？</h3><p>页面状态不复杂，原生 JS 足够；少一层框架，打开更快，也不依赖构建工具。</p></div>
+      <div class="card"><span class="n">追问 02</span><h3>15k 点怎么优化？</h3><p>一个 BufferGeometry + 一个 Points，一次 draw call；不逐点建对象，标签用 HTML。</p></div>
+      <div class="card"><span class="n">追问 03</span><h3>数据 10 万张？</h3><p>manifest + 分片 + 并发 + 断点续跑 + 版本化；先全量轻规则，再抽样重规则。</p></div>
+    </div>
+    <div class="footer"><span>每个数字都能回到代码 / 数据 / 报告</span><span>06 / 07</span></div>
+  </div>
+</section>
+
+<!-- 7 DEMO -->
+<section class="slide slide--dark">
+  <div class="pad">
+    <div class="top"><div class="l"><i></i>06 / DEMO & CONTACT</div><div>2026.11</div></div>
+    <div class="kicker">面试现场 30 秒</div>
+    <h1>先看一个框，<br>再看一张<em>报告</em>。</h1>
+    <div class="demo">
+      <div><b>01 / QA Console</b><p>点一个红色问题样本，指问题列表：“这是越界/重复框，能定位到第几个框。”</p></div>
+      <div><b>02 / Spatial Lab</b><p>点“自动巡检”，选中 GHOST 空框：“空框为什么只标 REVIEW。”</p></div>
+      <div><b>03 / Eval Lab</b><p>置信度 0.25→0.60：“P 升 R 降，阈值是业务取舍。”</p></div>
+    </div>
+    <div class="metrics" style="margin-top:24px">
+      <div><b>01</b><span>作品集 / 演示 / 技术说明</span></div>
+      <div><b>02</b><span>现场可打开 Demo</span></div>
+      <div><b>03</b><span>深圳 · 可实习 · 随时到岗</span></div>
+      <div><b>04</b><span>GitHub / 作品集 / 深圳</span></div>
+    </div>
+    <div class="footer"><span>个人练习作品 · 合成数据/模拟预测已标注</span><span>07 / 07</span></div>
+  </div>
+</section>
+</body>
+</html>
+

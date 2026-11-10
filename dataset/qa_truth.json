@@ -1,0 +1,74 @@
+{
+  "0006": [
+    "out_of_bounds"
+  ],
+  "0010": [
+    "out_of_bounds"
+  ],
+  "0014": [
+    "out_of_bounds"
+  ],
+  "0019": [
+    "zero_area"
+  ],
+  "0023": [
+    "zero_area"
+  ],
+  "0027": [
+    "zero_area"
+  ],
+  "0032": [
+    "duplicate"
+  ],
+  "0036": [
+    "duplicate"
+  ],
+  "0040": [
+    "duplicate"
+  ],
+  "0045": [
+    "invalid_class"
+  ],
+  "0049": [
+    "invalid_class"
+  ],
+  "0053": [
+    "invalid_class"
+  ],
+  "0058": [
+    "empty_label"
+  ],
+  "0062": [
+    "empty_label"
+  ],
+  "0066": [
+    "empty_label"
+  ],
+  "0071": [
+    "tiny_box"
+  ],
+  "0075": [
+    "tiny_box"
+  ],
+  "0079": [
+    "tiny_box"
+  ],
+  "0084": [
+    "aspect_ratio"
+  ],
+  "0088": [
+    "aspect_ratio"
+  ],
+  "0092": [
+    "aspect_ratio"
+  ],
+  "0097": [
+    "parse_error"
+  ],
+  "0101": [
+    "parse_error"
+  ],
+  "0105": [
+    "parse_error"
+  ]
+}
